@@ -40,19 +40,9 @@
     "RegionName": "northeurope"
   },
   {
-    "Latitude": "60.67488",
-    "Longitude": "17.14127",
-    "RegionName": "swedencentral"
-  },
-  {
     "Latitude": "50.941",
     "Longitude": "-0.799",
     "RegionName": "uksouth"
-  },
-  {
-    "Latitude": "52.3667",
-    "Longitude": "4.9",
-    "RegionName": "westeurope"
   },
   {
     "Latitude": "41.5908",
@@ -90,21 +80,6 @@
     "RegionName": "canadacentral"
   },
   {
-    "Latitude": "46.3772",
-    "Longitude": "2.3730",
-    "RegionName": "francecentral"
-  },
-  {
-    "Latitude": "50.110924",
-    "Longitude": "8.682127",
-    "RegionName": "germanywestcentral"
-  },
-  {
-    "Latitude": "59.913868",
-    "Longitude": "10.752245",
-    "RegionName": "norwayeast"
-  },
-  {
     "Latitude": "-23.55",
     "Longitude": "-46.633",
     "RegionName": "brazilsouth"
@@ -128,11 +103,6 @@
     "Latitude": "22.470701",
     "Longitude": "70.05773",
     "RegionName": "jioindiawest"
-  },
-  {
-    "Latitude": "47.451542",
-    "Longitude": "8.564572",
-    "RegionName": "switzerlandnorth"
   },
   {
     "Latitude": "25.266666",
@@ -198,26 +168,6 @@
     "Latitude": "46.817",
     "Longitude": "-71.217",
     "RegionName": "canadaeast"
-  },
-  {
-    "Latitude": "43.8345",
-    "Longitude": "2.1972",
-    "RegionName": "francesouth"
-  },
-  {
-    "Latitude": "53.073635",
-    "Longitude": "8.806422",
-    "RegionName": "germanynorth"
-  },
-  {
-    "Latitude": "58.969975",
-    "Longitude": "5.733107",
-    "RegionName": "norwaywest"
-  },
-  {
-    "Latitude": "46.204391",
-    "Longitude": "6.143158",
-    "RegionName": "switzerlandwest"
   },
   {
     "Latitude": "53.427",
