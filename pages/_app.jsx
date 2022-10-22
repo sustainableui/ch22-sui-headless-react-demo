@@ -11,6 +11,11 @@ const SuiDisplayModes = {
 };
 
 const SuiConfig = {
+  thresholds: {
+    [SuiDisplayModes.Low]: 350,
+    [SuiDisplayModes.Moderate]: 150,
+    [SuiDisplayModes.High]: 0,
+  },
   personalizationTimeoutLimit: 8000,
   userControl: true,
   gracefulDegradationTheme: {
@@ -49,8 +54,18 @@ function selectDisplayMode(state, newDisplayMode) {
 }
 
 function determineDisplayModeFromGridCarbonIntensity(state, gridCarbonIntensity) {
-  if (gridCarbonIntensity > 350) return { ...state, displayMode: SuiDisplayModes.Low };
-  if (gridCarbonIntensity > 150) return { ...state, displayMode: SuiDisplayModes.Moderate };
+  if (gridCarbonIntensity > SuiConfig.thresholds[SuiDisplayModes.Low])
+    return {
+      ...state,
+      displayMode: SuiDisplayModes.Low,
+    };
+
+  if (gridCarbonIntensity > SuiConfig.thresholds[SuiDisplayModes.Moderate])
+    return {
+      ...state,
+      displayMode: SuiDisplayModes.Moderate,
+    };
+
   return { ...state, displayMode: SuiDisplayModes.High };
 }
 
