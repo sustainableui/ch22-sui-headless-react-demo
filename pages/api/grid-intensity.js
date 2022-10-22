@@ -25,7 +25,7 @@ function getClosestAzureRegion(userCoords, azureRegions) {
   return azureRegions[closestAzureRegionIndex].RegionName;
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const {
     query: { lat, lon },
   } = req;
@@ -40,3 +40,5 @@ export default async function handler(req, res) {
     res.status(200).json({ value: null });
   }
 }
+
+export default handler;
