@@ -107,7 +107,7 @@ function MyApp({ Component, pageProps }) {
       <SuiPersonalizationLoader
         timeoutLimit={config.personalizationTimeoutLimit}
         onPersonalizationCancel={onPersonalizationCancel}
-        onTimerExpired={onPersonalizationCancel}
+        onTimeoutExpired={onPersonalizationCancel}
       />
     );
 
