@@ -21,7 +21,8 @@ const SuiConfig = {
     },
     video: {
       [SuiDisplayModes.Low]: 1,
-      [SuiDisplayModes.Moderate]: 2,
+      [SuiDisplayModes.Moderate]: 1,
+      [SuiDisplayModes.High]: 2,
     },
     carousel: {
       [SuiDisplayModes.Low]: 1,
@@ -29,7 +30,7 @@ const SuiConfig = {
       [SuiDisplayModes.High]: 3,
     },
     button: {
-      [SuiDisplayModes.Low]: 1,
+      [SuiDisplayModes.High]: 1,
     },
   },
 };
