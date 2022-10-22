@@ -75,7 +75,7 @@ function useSui() {
 
   return {
     displayMode: state.displayMode,
-    isLoading: !state.displayMode,
+    isPersonalizationInProgress: !state.displayMode,
     onPersonalizationCancel: selectModerateDisplayMode,
     config: SuiConfig,
   };
@@ -83,9 +83,9 @@ function useSui() {
 
 function MyApp({ Component, pageProps }) {
   const sui = useSui();
-  const { isLoading, onPersonalizationCancel, config } = sui;
+  const { isPersonalizationInProgress, onPersonalizationCancel, config } = sui;
 
-  if (isLoading)
+  if (isPersonalizationInProgress)
     return (
       <SuiPersonalizationLoader
         timeoutLimit={config.personalizationTimeoutLimit}
