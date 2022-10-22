@@ -48,10 +48,10 @@ function selectDisplayMode(state, newDisplayMode) {
   return { ...state, displayMode: newDisplayMode };
 }
 
-// TODO: implement missing logic
-// eslint-disable-next-line no-unused-vars
 function determineDisplayModeFromGridCarbonIntensity(state, gridCarbonIntensity) {
-  return { ...state, displayMode: SuiDisplayModes.Moderate };
+  if (gridCarbonIntensity > 350) return { ...state, displayMode: SuiDisplayModes.Low };
+  if (gridCarbonIntensity > 150) return { ...state, displayMode: SuiDisplayModes.Moderate };
+  return { ...state, displayMode: SuiDisplayModes.High };
 }
 
 function SuiReducer(state, action) {
