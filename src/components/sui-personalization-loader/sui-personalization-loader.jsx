@@ -1,4 +1,4 @@
-export default function SUILoader({ timeoutLimit, onPersonalizationCancel, onTimerExpired }) {
+function SUIPersonalizationLoader({ timeoutLimit, onPersonalizationCancel, onTimerExpired }) {
   // TODO: setTimeout
 
   function handleClick(event) {
@@ -13,3 +13,5 @@ export default function SUILoader({ timeoutLimit, onPersonalizationCancel, onTim
     </div>
   );
 }
+
+export default SUIPersonalizationLoader;
