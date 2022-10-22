@@ -4,22 +4,34 @@ import SuiPersonalizationLoader from '../src/components/sui-personalization-load
 import SuiSwitch from '../src/components/sui-switch';
 import '../styles/globals.css';
 
-const SuiConfig = {
-  personalizationTimeoutLimit: 8000,
-  userInput: true,
-  gracefulDegradationTheme: {
-    button: {
-      low: 1,
-      moderate: 2,
-      high: 3,
-    },
-  },
-};
-
 const SuiDisplayModes = {
   Low: 'low-display-mode',
   Moderate: 'moderate-display-mode',
   High: 'high-display-mode',
+};
+
+const SuiConfig = {
+  personalizationTimeoutLimit: 8000,
+  userControl: true,
+  gracefulDegradationTheme: {
+    image: {
+      [SuiDisplayModes.Low]: 1,
+      [SuiDisplayModes.Moderate]: 2,
+      [SuiDisplayModes.High]: 3,
+    },
+    video: {
+      [SuiDisplayModes.Low]: 1,
+      [SuiDisplayModes.Moderate]: 2,
+    },
+    carousel: {
+      [SuiDisplayModes.Low]: 1,
+      [SuiDisplayModes.Moderate]: 2,
+      [SuiDisplayModes.High]: 3,
+    },
+    button: {
+      [SuiDisplayModes.Low]: 1,
+    },
+  },
 };
 
 const SuiReducerInitialState = {
