@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     const closestAzureRegion = getClosestAzureRegion({lat, lon}, AZURE_REGIONS)
     const gridIntensityResponse = await fetch(`https://carbon-aware-api.azurewebsites.net/emissions/bylocation?location=${closestAzureRegion}`)
     if (gridIntensityResponse.status === 200) {
-        const value = gridIntensity.json()
+        const value = await gridIntensityResponse.json()
         res.status(200).json({value})
     } else {
         res.status(200).json({value: null})
