@@ -1,5 +1,5 @@
-function SUISwitch() {
+function SuiSwitch() {
   return null;
 }
 
-export default SUISwitch;
+export default SuiSwitch;

@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 
-const SUIContext = React.createContext(undefined);
-SUIContext.displayName = 'SUI Context';
+const SuiContext = React.createContext(undefined);
+SuiContext.displayName = 'SUI Context';
 
-function useSUIContext() {
-  return useContext(SUIContext);
+function useSuiContext() {
+  return useContext(SuiContext);
 }
 
-export { SUIContext, useSUIContext };
+export { SuiContext, useSuiContext };

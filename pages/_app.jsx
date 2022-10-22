@@ -1,10 +1,10 @@
 import { useEffect, useReducer } from 'react';
-import { SUIContext } from '../src/base/context/sui';
-import SUIPersonalizationLoader from '../src/components/sui-personalization-loader';
-import SUISwitch from '../src/components/sui-switch';
+import { SuiContext } from '../src/base/context/sui';
+import SuiPersonalizationLoader from '../src/components/sui-personalization-loader';
+import SuiSwitch from '../src/components/sui-switch';
 import '../styles/globals.css';
 
-const SUIConfig = {
+const SuiConfig = {
   personalizationTimeoutLimit: 8000,
   userInput: true,
   gracefulDegradationTheme: {
@@ -16,17 +16,17 @@ const SUIConfig = {
   },
 };
 
-const SUIDisplayModes = {
+const SuiDisplayModes = {
   Low: 'low-display-mode',
   Moderate: 'moderate-display-mode',
   High: 'high-display-mode',
 };
 
-const SUIInitialState = {
+const SuiReducerInitialState = {
   displayMode: null,
 };
 
-const ActionTypes = {
+const SuiReducerActionTypes = {
   SelectDisplayMode: 'select-display-mode',
   DetermineDisplayModeFromGridCarbonIntensity: 'determine-display-mode-from-grid-carbon-intensity',
 };
@@ -38,29 +38,29 @@ function selectDisplayMode(state, newDisplayMode) {
 // TODO: implement missing logic
 // eslint-disable-next-line no-unused-vars
 function determineDisplayModeFromGridCarbonIntensity(state, gridCarbonIntensity) {
-  return { ...state, displayMode: SUIDisplayModes.Moderate };
+  return { ...state, displayMode: SuiDisplayModes.Moderate };
 }
 
-function SUIReducer(state, action) {
+function SuiReducer(state, action) {
   switch (action.type) {
-    case ActionTypes.SelectDisplayMode:
+    case SuiReducerActionTypes.SelectDisplayMode:
       return selectDisplayMode(state, action.payload);
-    case ActionTypes.DetermineDisplayModeFromGridCarbonIntensity:
+    case SuiReducerActionTypes.DetermineDisplayModeFromGridCarbonIntensity:
       return determineDisplayModeFromGridCarbonIntensity(state, action.payload);
     default:
       throw new Error('Invalid action type');
   }
 }
 
-function useSUI() {
-  const [state, dispatch] = useReducer(SUIReducer, SUIInitialState);
+function useSui() {
+  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState);
 
   function selectModerateDisplayMode() {
-    dispatch({ type: ActionTypes.SelectDisplayMode, payload: SUIDisplayModes.Moderate });
+    dispatch({ type: SuiReducerActionTypes.SelectDisplayMode, payload: SuiDisplayModes.Moderate });
   }
 
   function determineDisplayModeFromGridCarbonIntensity(gridCarbonIntensity) {
-    dispatch({ type: ActionTypes.DetermineDisplayModeFromGridCarbonIntensity, payload: gridCarbonIntensity });
+    dispatch({ type: SuiReducerActionTypes.DetermineDisplayModeFromGridCarbonIntensity, payload: gridCarbonIntensity });
   }
 
   useEffect(() => {
@@ -77,17 +77,17 @@ function useSUI() {
     displayMode: state.displayMode,
     isLoading: !state.displayMode,
     onPersonalizationCancel: selectModerateDisplayMode,
-    config: SUIConfig,
+    config: SuiConfig,
   };
 }
 
 function MyApp({ Component, pageProps }) {
-  const SUI = useSUI();
-  const { isLoading, onPersonalizationCancel, config } = SUI;
+  const sui = useSui();
+  const { isLoading, onPersonalizationCancel, config } = sui;
 
   if (isLoading)
     return (
-      <SUIPersonalizationLoader
+      <SuiPersonalizationLoader
         timeoutLimit={config.personalizationTimeoutLimit}
         onPersonalizationCancel={onPersonalizationCancel}
         onTimerExpired={onPersonalizationCancel}
@@ -95,10 +95,10 @@ function MyApp({ Component, pageProps }) {
     );
 
   return (
-    <SUIContext.Provider value={SUI}>
-      <SUISwitch />
+    <SuiContext.Provider value={sui}>
+      <SuiSwitch />
       <Component {...pageProps} />
-    </SUIContext.Provider>
+    </SuiContext.Provider>
   );
 }
 
