@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import { SuiContext } from '../src/base/context/sui';
 import SuiPersonalizationLoader from '../src/components/sui-personalization-loader';
 import SuiSwitch from '../src/components/sui-switch';
@@ -65,17 +65,7 @@ function SuiReducer(state, action) {
   }
 }
 
-function useSui() {
-  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState);
-
-  function selectModerateDisplayMode() {
-    dispatch({ type: SuiReducerActionTypes.SelectDisplayMode, payload: SuiDisplayModes.Moderate });
-  }
-
-  function determineDisplayModeFromGridCarbonIntensity(gridCarbonIntensity) {
-    dispatch({ type: SuiReducerActionTypes.DetermineDisplayModeFromGridCarbonIntensity, payload: gridCarbonIntensity });
-  }
-
+function useGridCarbonIntensity(determineDisplayModeFromGridCarbonIntensity) {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async ({ coords }) => {
       const gridCarbonIntensityResponse = await fetch(
@@ -84,7 +74,21 @@ function useSui() {
       const gridCarbonIntensity = await gridCarbonIntensityResponse.json();
       determineDisplayModeFromGridCarbonIntensity(gridCarbonIntensity.value);
     });
+  }, [determineDisplayModeFromGridCarbonIntensity]);
+}
+
+function useSui() {
+  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState);
+
+  const selectModerateDisplayMode = useCallback(function () {
+    dispatch({ type: SuiReducerActionTypes.SelectDisplayMode, payload: SuiDisplayModes.Moderate });
   }, []);
+
+  const determineDisplayModeFromGridCarbonIntensity = useCallback(function (gridCarbonIntensity) {
+    dispatch({ type: SuiReducerActionTypes.DetermineDisplayModeFromGridCarbonIntensity, payload: gridCarbonIntensity });
+  }, []);
+
+  useGridCarbonIntensity(determineDisplayModeFromGridCarbonIntensity);
 
   return {
     displayMode: state.displayMode,
