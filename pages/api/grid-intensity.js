@@ -39,7 +39,7 @@ async function handler(req, res) {
 
   if (gridIntensityResponse.status === 200) {
     const value = await gridIntensityResponse.json();
-    res.status(200).json({ value });
+    res.status(200).json({ value: value[0].rating });
   } else {
     res.status(200).json({ value: null });
   }
