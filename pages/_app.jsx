@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer } from 'react';
 import { SuiContext } from '../src/base/context/sui';
-import SuiPersonalizationLoader from '../src/components/sui-personalization-loader';
+import SuiLocalizationLoader from '../src/components/sui-localization-loader';
 import SuiSwitch from '../src/components/sui-switch';
 import '../styles/globals.css';
 
@@ -10,7 +10,7 @@ const SuiDisplayModes = {
   High: 'high',
 };
 
-const SuiPersonalizationStatus = {
+const SuiLocalizationStatus = {
   InProgress: 'in-progress',
   Success: 'success',
   Failure: 'failure',
@@ -51,15 +51,15 @@ const SuiReducerInitialState = {
     value: null,
     measurementRegion: null,
   },
-  personalizationStatus: null,
-  personalizationError: null,
+  localizationStatus: null,
+  localizationError: null,
   config: SuiConfig,
 };
 
 const SuiReducerActionTypes = {
   SelectDisplayMode: 'select-display-mode',
-  StartPersonalization: 'start-personalization',
-  CancelPersonalization: 'cancel-personalization',
+  StartLocalization: 'start-localization',
+  CancelLocalization: 'cancel-localization',
   DetermineDisplayMode: 'determine-display-mode',
 };
 
@@ -67,21 +67,21 @@ function selectDisplayMode(state, newDisplayMode) {
   return {
     ...state,
     displayMode: newDisplayMode,
-    personalizationStatus: SuiPersonalizationStatus.Success,
-    personalizationError: null,
+    localizationStatus: SuiLocalizationStatus.Success,
+    localizationError: null,
   };
 }
 
-function startPersonalization(state) {
-  return { ...state, personalizationStatus: SuiPersonalizationStatus.InProgress, personalizationError: null };
+function startLocalization(state) {
+  return { ...state, localizationStatus: SuiLocalizationStatus.InProgress, localizationError: null };
 }
 
-function cancelPersonalization(state, reason) {
+function cancelLocalization(state, reason) {
   return {
     ...state,
     displayMode: SuiDisplayModes.Moderate,
-    personalizationStatus: reason ? SuiPersonalizationStatus.Failure : SuiPersonalizationStatus.Cancelled,
-    personalizationError: reason || null,
+    localizationStatus: reason ? SuiLocalizationStatus.Failure : SuiLocalizationStatus.Cancelled,
+    localizationError: reason || null,
   };
 }
 
@@ -91,8 +91,8 @@ function determineDisplayMode(state, gridCarbonIntensityData) {
       ...state,
       displayMode: SuiDisplayModes.Low,
       gridCarbonIntensityData,
-      personalizationStatus: SuiPersonalizationStatus.Success,
-      personalizationError: null,
+      localizationStatus: SuiLocalizationStatus.Success,
+      localizationError: null,
     };
 
   if (gridCarbonIntensityData.value > SuiConfig.thresholds[SuiDisplayModes.Moderate])
@@ -100,16 +100,16 @@ function determineDisplayMode(state, gridCarbonIntensityData) {
       ...state,
       displayMode: SuiDisplayModes.Moderate,
       gridCarbonIntensityData,
-      personalizationStatus: SuiPersonalizationStatus.Success,
-      personalizationError: null,
+      localizationStatus: SuiLocalizationStatus.Success,
+      localizationError: null,
     };
 
   return {
     ...state,
     displayMode: SuiDisplayModes.High,
     gridCarbonIntensityData,
-    personalizationStatus: SuiPersonalizationStatus.Success,
-    personalizationError: null,
+    localizationStatus: SuiLocalizationStatus.Success,
+    localizationError: null,
   };
 }
 
@@ -117,10 +117,10 @@ function SuiReducer(state, action) {
   switch (action.type) {
     case SuiReducerActionTypes.SelectDisplayMode:
       return selectDisplayMode(state, action.payload);
-    case SuiReducerActionTypes.StartPersonalization:
-      return startPersonalization(state);
-    case SuiReducerActionTypes.CancelPersonalization:
-      return cancelPersonalization(state, action.payload);
+    case SuiReducerActionTypes.StartLocalization:
+      return startLocalization(state);
+    case SuiReducerActionTypes.CancelLocalization:
+      return cancelLocalization(state, action.payload);
     case SuiReducerActionTypes.DetermineDisplayMode:
       return determineDisplayMode(state, action.payload);
     default:
@@ -128,16 +128,11 @@ function SuiReducer(state, action) {
   }
 }
 
-function useGridCarbonIntensityData(
-  startPersonalization,
-  cancelPersonalization,
-  determineDisplayMode,
-  locationTimeout,
-) {
+function useGridCarbonIntensityData(startLocalization, cancelLocalization, determineDisplayMode, locationTimeout) {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
-        startPersonalization();
+        startLocalization();
 
         const gridCarbonIntensityResponse = await fetch(
           `/api/grid-carbon-intensity?lat=${coords.latitude}&lon=${coords.longitude}`,
@@ -147,33 +142,33 @@ function useGridCarbonIntensityData(
           const data = await gridCarbonIntensityResponse.json();
           determineDisplayMode(data);
         } else {
-          cancelPersonalization(gridCarbonIntensityResponse.statusText);
+          cancelLocalization(gridCarbonIntensityResponse.statusText);
         }
       },
       error => {
-        cancelPersonalization(error.message);
+        cancelLocalization(error.message);
       },
       { timeout: locationTimeout },
     );
-  }, [startPersonalization, cancelPersonalization, determineDisplayMode, locationTimeout]);
+  }, [startLocalization, cancelLocalization, determineDisplayMode, locationTimeout]);
 }
 
 function useSui() {
-  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState, null);
+  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState);
 
   const selectDisplayMode = useCallback(function (displayMode) {
     dispatch({ type: SuiReducerActionTypes.SelectDisplayMode, payload: displayMode });
   }, []);
 
-  const startPersonalization = useCallback(function () {
+  const startLocalization = useCallback(function () {
     dispatch({
-      type: SuiReducerActionTypes.StartPersonalization,
+      type: SuiReducerActionTypes.StartLocalization,
     });
   }, []);
 
-  const cancelPersonalization = useCallback(function (reason = null) {
+  const cancelLocalization = useCallback(function (reason = null) {
     dispatch({
-      type: SuiReducerActionTypes.CancelPersonalization,
+      type: SuiReducerActionTypes.CancelLocalization,
       payload: reason,
     });
   }, []);
@@ -185,20 +180,15 @@ function useSui() {
     });
   }, []);
 
-  useGridCarbonIntensityData(
-    startPersonalization,
-    cancelPersonalization,
-    determineDisplayMode,
-    state.config.locationTimeout,
-  );
+  useGridCarbonIntensityData(startLocalization, cancelLocalization, determineDisplayMode, state.config.locationTimeout);
 
   return {
     state: {
       ...state,
-      isPersonalizationInProgress: state.personalizationStatus === SuiPersonalizationStatus.InProgress,
+      isLocalizationInProgress: state.localizationStatus === SuiLocalizationStatus.InProgress,
     },
     handlers: {
-      onPersonalizationCancel: cancelPersonalization,
+      onLocalizationCancel: cancelLocalization,
       onDisplayModeSelect: selectDisplayMode,
     },
     config: state.config,
@@ -208,13 +198,13 @@ function useSui() {
 function MyApp({ Component, pageProps }) {
   const sui = useSui();
   const {
-    state: { isPersonalizationInProgress },
+    state: { isLocalizationInProgress },
   } = sui;
 
-  if (isPersonalizationInProgress)
+  if (isLocalizationInProgress)
     return (
       <SuiContext.Provider value={sui}>
-        <SuiPersonalizationLoader />
+        <SuiLocalizationLoader />
       </SuiContext.Provider>
     );
 

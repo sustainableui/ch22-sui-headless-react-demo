@@ -1,13 +1,13 @@
 import { useSuiContext } from '../../base/context/sui';
 
-function SuiPersonalizationLoader() {
+function SuiLocalizationLoader() {
   const {
-    handlers: { onPersonalizationCancel },
+    handlers: { onLocalizationCancel },
   } = useSuiContext();
 
   function handleClick(event) {
     event.preventDefault();
-    onPersonalizationCancel();
+    onLocalizationCancel();
   }
 
   return (
@@ -19,4 +19,4 @@ function SuiPersonalizationLoader() {
   );
 }
 
-export default SuiPersonalizationLoader;
+export default SuiLocalizationLoader;
