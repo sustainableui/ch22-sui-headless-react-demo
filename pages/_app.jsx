@@ -197,11 +197,8 @@ function useSui() {
 
 function MyApp({ Component, pageProps }) {
   const sui = useSui();
-  const {
-    state: { isLocalizationInProgress },
-  } = sui;
 
-  if (isLocalizationInProgress)
+  if (sui.state.isLocalizationInProgress)
     return (
       <SuiContext.Provider value={sui}>
         <SuiLocalizationLoader />
