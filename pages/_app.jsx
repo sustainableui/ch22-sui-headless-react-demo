@@ -10,6 +10,13 @@ const SuiDisplayModes = {
   High: 'high',
 };
 
+const SuiPersonalizationStatus = {
+  InProgress: 'in-progress',
+  Success: 'success',
+  Failure: 'failure',
+  Cancelled: 'cancelled',
+};
+
 const SuiConfig = {
   thresholds: {
     [SuiDisplayModes.Low]: 350,
@@ -44,15 +51,38 @@ const SuiReducerInitialState = {
     value: null,
     measurementRegion: null,
   },
+  personalizationStatus: null,
+  personalizationError: null,
+  config: SuiConfig,
 };
 
 const SuiReducerActionTypes = {
   SelectDisplayMode: 'select-display-mode',
+  StartPersonalization: 'start-personalization',
+  CancelPersonalization: 'cancel-personalization',
   DetermineDisplayMode: 'determine-display-mode',
 };
 
 function selectDisplayMode(state, newDisplayMode) {
-  return { ...state, displayMode: newDisplayMode };
+  return {
+    ...state,
+    displayMode: newDisplayMode,
+    personalizationStatus: SuiPersonalizationStatus.Success,
+    personalizationError: null,
+  };
+}
+
+function startPersonalization(state) {
+  return { ...state, personalizationStatus: SuiPersonalizationStatus.InProgress, personalizationError: null };
+}
+
+function cancelPersonalization(state, reason) {
+  return {
+    ...state,
+    displayMode: SuiDisplayModes.Moderate,
+    personalizationStatus: reason ? SuiPersonalizationStatus.Failure : SuiPersonalizationStatus.Cancelled,
+    personalizationError: reason || null,
+  };
 }
 
 function determineDisplayMode(state, gridCarbonIntensityData) {
@@ -61,6 +91,8 @@ function determineDisplayMode(state, gridCarbonIntensityData) {
       ...state,
       displayMode: SuiDisplayModes.Low,
       gridCarbonIntensityData,
+      personalizationStatus: SuiPersonalizationStatus.Success,
+      personalizationError: null,
     };
 
   if (gridCarbonIntensityData.value > SuiConfig.thresholds[SuiDisplayModes.Moderate])
@@ -68,15 +100,27 @@ function determineDisplayMode(state, gridCarbonIntensityData) {
       ...state,
       displayMode: SuiDisplayModes.Moderate,
       gridCarbonIntensityData,
+      personalizationStatus: SuiPersonalizationStatus.Success,
+      personalizationError: null,
     };
 
-  return { ...state, displayMode: SuiDisplayModes.High, gridCarbonIntensityData };
+  return {
+    ...state,
+    displayMode: SuiDisplayModes.High,
+    gridCarbonIntensityData,
+    personalizationStatus: SuiPersonalizationStatus.Success,
+    personalizationError: null,
+  };
 }
 
 function SuiReducer(state, action) {
   switch (action.type) {
     case SuiReducerActionTypes.SelectDisplayMode:
       return selectDisplayMode(state, action.payload);
+    case SuiReducerActionTypes.StartPersonalization:
+      return startPersonalization(state);
+    case SuiReducerActionTypes.CancelPersonalization:
+      return cancelPersonalization(state, action.payload);
     case SuiReducerActionTypes.DetermineDisplayMode:
       return determineDisplayMode(state, action.payload);
     default:
@@ -84,23 +128,54 @@ function SuiReducer(state, action) {
   }
 }
 
-function useGridCarbonIntensityData(determineDisplayMode) {
+function useGridCarbonIntensityData(
+  startPersonalization,
+  cancelPersonalization,
+  determineDisplayMode,
+  locationTimeout,
+) {
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
-      const gridCarbonIntensityResponse = await fetch(
-        `/api/grid-carbon-intensity?lat=${coords.latitude}&lon=${coords.longitude}`,
-      );
-      const data = await gridCarbonIntensityResponse.json();
-      determineDisplayMode(data);
-    });
-  }, [determineDisplayMode]);
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        startPersonalization();
+
+        const gridCarbonIntensityResponse = await fetch(
+          `/api/grid-carbon-intensity?lat=${coords.latitude}&lon=${coords.longitude}`,
+        );
+
+        if (gridCarbonIntensityResponse.ok) {
+          const data = await gridCarbonIntensityResponse.json();
+          determineDisplayMode(data);
+        } else {
+          cancelPersonalization(gridCarbonIntensityResponse.statusText);
+        }
+      },
+      error => {
+        cancelPersonalization(error.code);
+      },
+      { timeout: locationTimeout },
+    );
+  }, [startPersonalization, cancelPersonalization, determineDisplayMode, locationTimeout]);
 }
 
-function useSui(config) {
-  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState);
+function useSui() {
+  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState, null);
 
   const selectDisplayMode = useCallback(function (displayMode) {
     dispatch({ type: SuiReducerActionTypes.SelectDisplayMode, payload: displayMode });
+  }, []);
+
+  const startPersonalization = useCallback(function () {
+    dispatch({
+      type: SuiReducerActionTypes.StartPersonalization,
+    });
+  }, []);
+
+  const cancelPersonalization = useCallback(function (reason = null) {
+    dispatch({
+      type: SuiReducerActionTypes.CancelPersonalization,
+      payload: reason,
+    });
   }, []);
 
   const determineDisplayMode = useCallback(function (gridCarbonIntensityData) {
@@ -110,23 +185,28 @@ function useSui(config) {
     });
   }, []);
 
-  useGridCarbonIntensityData(determineDisplayMode);
+  useGridCarbonIntensityData(
+    startPersonalization,
+    cancelPersonalization,
+    determineDisplayMode,
+    state.config.locationTimeout,
+  );
 
   return {
     state: {
       ...state,
-      isPersonalizationInProgress: !state.displayMode,
+      isPersonalizationInProgress: state.personalizationStatus === SuiPersonalizationStatus.InProgress,
     },
     handlers: {
-      onPersonalizationCancel: () => selectDisplayMode(config.displayModes.Moderate),
+      onPersonalizationCancel: cancelPersonalization,
       onDisplayModeSelect: selectDisplayMode,
     },
-    config,
+    config: state.config,
   };
 }
 
 function MyApp({ Component, pageProps }) {
-  const sui = useSui(SuiConfig);
+  const sui = useSui();
   const {
     state: { isPersonalizationInProgress },
   } = sui;
