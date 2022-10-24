@@ -25,23 +25,6 @@ const SuiConfig = {
   displayModes: SuiDisplayModes,
   locationTimeout: 8000,
   userControl: true,
-  gracefulDegradationTheme: {
-    image: {
-      [SuiDisplayModes.Low]: 1,
-      [SuiDisplayModes.Moderate]: 2,
-      [SuiDisplayModes.High]: 3,
-    },
-    video: {
-      [SuiDisplayModes.Low]: 1,
-      [SuiDisplayModes.Moderate]: 1,
-      [SuiDisplayModes.High]: 2,
-    },
-    carousel: {
-      [SuiDisplayModes.Low]: 1,
-      [SuiDisplayModes.Moderate]: 2,
-      [SuiDisplayModes.High]: 3,
-    },
-  },
 };
 
 const SuiReducerInitialState = {
