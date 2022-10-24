@@ -1,10 +1,16 @@
-import { useSuiContext } from '../../base/context/sui';
+import { withSui } from '../../base/context/sui';
 import s from './background-color.module.css';
 
-function BackgroundColor() {
-  const sui = useSuiContext();
-
-  return <main className={s.container} />;
+function LowBackgroundColor() {
+  return <main className={`${s.container} ${s.lowContainer}`} />;
 }
 
-export default BackgroundColor;
+function ModerateBackgroundColor() {
+  return <main className={`${s.container} ${s.moderateContainer}`} />;
+}
+
+function HighBackgroundColor() {
+  return <main className={`${s.container} ${s.highContainer}`} />;
+}
+
+export default withSui([LowBackgroundColor, ModerateBackgroundColor, HighBackgroundColor]);

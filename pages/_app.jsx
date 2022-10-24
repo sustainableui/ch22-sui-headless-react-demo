@@ -3,7 +3,7 @@ import { SuiContext } from '../src/base/context/sui';
 import SuiLocalizationLoader from '../src/components/sui-localization-loader';
 import SuiSwitch from '../src/components/sui-switch';
 
-const SuiDisplayModes = {
+export const SuiDisplayModes = {
   Low: 'low',
   Moderate: 'moderate',
   High: 'high',
