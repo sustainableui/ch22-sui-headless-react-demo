@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { SuiDisplayModes } from '../../../pages/_app';
 
 const SuiContext = React.createContext(undefined);
 SuiContext.displayName = 'SuiContext';
@@ -10,18 +9,18 @@ function useSuiContext() {
 
 function withSui(components) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { displayMode } = useSuiContext();
+  const { displayMode, config } = useSuiContext();
 
   let Component;
 
   switch (displayMode) {
-    case SuiDisplayModes.Low:
+    case config.displayModes.Low:
       Component = components[0];
       break;
-    case SuiDisplayModes.Moderate:
+    case config.displayModes.Moderate:
       Component = components[1];
       break;
-    case SuiDisplayModes.High:
+    case config.displayModes.High:
       Component = components[2];
       break;
     default:
