@@ -1,17 +1,14 @@
-import { useEffect } from 'react';
+import { useSuiContext } from '../../base/context/sui';
 
-function SuiPersonalizationLoader({ timeoutLimit, onPersonalizationCancel, onTimeoutExpired }) {
+function SuiPersonalizationLoader() {
+  const {
+    handlers: { onPersonalizationCancel },
+  } = useSuiContext();
+
   function handleClick(event) {
     event.preventDefault();
     onPersonalizationCancel();
   }
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onTimeoutExpired();
-    }, timeoutLimit);
-    return () => clearTimeout(timer);
-  }, [onTimeoutExpired, timeoutLimit]);
 
   return (
     <div>

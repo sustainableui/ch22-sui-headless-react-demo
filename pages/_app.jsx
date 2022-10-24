@@ -129,17 +129,13 @@ function MyApp({ Component, pageProps }) {
   const sui = useSui(SuiConfig);
   const {
     state: { isPersonalizationInProgress },
-    handlers: { onPersonalizationCancel },
-    config,
   } = sui;
 
   if (isPersonalizationInProgress)
     return (
-      <SuiPersonalizationLoader
-        timeoutLimit={config.locationTimeout}
-        onPersonalizationCancel={onPersonalizationCancel}
-        onTimeoutExpired={onPersonalizationCancel}
-      />
+      <SuiContext.Provider value={sui}>
+        <SuiPersonalizationLoader />
+      </SuiContext.Provider>
     );
 
   return (
