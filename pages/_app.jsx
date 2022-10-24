@@ -151,7 +151,7 @@ function useGridCarbonIntensityData(
         }
       },
       error => {
-        cancelPersonalization(error.code);
+        cancelPersonalization(error.message);
       },
       { timeout: locationTimeout },
     );
