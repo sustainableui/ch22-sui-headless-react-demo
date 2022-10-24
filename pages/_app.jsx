@@ -5,9 +5,9 @@ import SuiSwitch from '../src/components/sui-switch';
 import '../styles/globals.css';
 
 const SuiDisplayModes = {
-  Low: 'low-display-mode',
-  Moderate: 'moderate-display-mode',
-  High: 'high-display-mode',
+  Low: 'low',
+  Moderate: 'moderate',
+  High: 'high',
 };
 
 const SuiConfig = {
@@ -17,7 +17,7 @@ const SuiConfig = {
     [SuiDisplayModes.High]: 0,
   },
   displayModes: SuiDisplayModes,
-  personalizationTimeoutLimit: 8000,
+  locationTimeout: 8000,
   userControl: true,
   gracefulDegradationTheme: {
     image: {
@@ -40,60 +40,60 @@ const SuiConfig = {
 
 const SuiReducerInitialState = {
   displayMode: null,
-  gridCarbonIntensity: {
+  gridCarbonIntensityData: {
     value: null,
-    location: null,
+    measurementRegion: null,
   },
 };
 
 const SuiReducerActionTypes = {
   SelectDisplayMode: 'select-display-mode',
-  DetermineDisplayModeFromGridCarbonIntensity: 'determine-display-mode-from-grid-carbon-intensity',
+  DetermineDisplayMode: 'determine-display-mode',
 };
 
 function selectDisplayMode(state, newDisplayMode) {
   return { ...state, displayMode: newDisplayMode };
 }
 
-function determineDisplayModeFromGridCarbonIntensity(state, gridCarbonIntensity) {
-  if (gridCarbonIntensity.value > SuiConfig.thresholds[SuiDisplayModes.Low])
+function determineDisplayMode(state, gridCarbonIntensityData) {
+  if (gridCarbonIntensityData.value > SuiConfig.thresholds[SuiDisplayModes.Low])
     return {
       ...state,
       displayMode: SuiDisplayModes.Low,
-      gridCarbonIntensity,
+      gridCarbonIntensityData,
     };
 
-  if (gridCarbonIntensity.value > SuiConfig.thresholds[SuiDisplayModes.Moderate])
+  if (gridCarbonIntensityData.value > SuiConfig.thresholds[SuiDisplayModes.Moderate])
     return {
       ...state,
       displayMode: SuiDisplayModes.Moderate,
-      gridCarbonIntensity,
+      gridCarbonIntensityData,
     };
 
-  return { ...state, displayMode: SuiDisplayModes.High, gridCarbonIntensity };
+  return { ...state, displayMode: SuiDisplayModes.High, gridCarbonIntensityData };
 }
 
 function SuiReducer(state, action) {
   switch (action.type) {
     case SuiReducerActionTypes.SelectDisplayMode:
       return selectDisplayMode(state, action.payload);
-    case SuiReducerActionTypes.DetermineDisplayModeFromGridCarbonIntensity:
-      return determineDisplayModeFromGridCarbonIntensity(state, action.payload);
+    case SuiReducerActionTypes.DetermineDisplayMode:
+      return determineDisplayMode(state, action.payload);
     default:
       throw new Error('Invalid action type');
   }
 }
 
-function useGridCarbonIntensity(determineDisplayModeFromGridCarbonIntensity) {
+function useGridCarbonIntensityData(determineDisplayMode) {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async ({ coords }) => {
       const gridCarbonIntensityResponse = await fetch(
         `/api/grid-carbon-intensity?lat=${coords.latitude}&lon=${coords.longitude}`,
       );
-      const gridCarbonIntensity = await gridCarbonIntensityResponse.json();
-      determineDisplayModeFromGridCarbonIntensity(gridCarbonIntensity);
+      const data = await gridCarbonIntensityResponse.json();
+      determineDisplayMode(data);
     });
-  }, [determineDisplayModeFromGridCarbonIntensity]);
+  }, [determineDisplayMode]);
 }
 
 function useSui(config) {
@@ -103,14 +103,14 @@ function useSui(config) {
     dispatch({ type: SuiReducerActionTypes.SelectDisplayMode, payload: displayMode });
   }, []);
 
-  const determineDisplayModeFromGridCarbonIntensity = useCallback(function (gridCarbonIntensity) {
+  const determineDisplayMode = useCallback(function (gridCarbonIntensityData) {
     dispatch({
-      type: SuiReducerActionTypes.DetermineDisplayModeFromGridCarbonIntensity,
-      payload: gridCarbonIntensity,
+      type: SuiReducerActionTypes.DetermineDisplayMode,
+      payload: gridCarbonIntensityData,
     });
   }, []);
 
-  useGridCarbonIntensity(determineDisplayModeFromGridCarbonIntensity);
+  useGridCarbonIntensityData(determineDisplayMode);
 
   return {
     state: {
@@ -136,7 +136,7 @@ function MyApp({ Component, pageProps }) {
   if (isPersonalizationInProgress)
     return (
       <SuiPersonalizationLoader
-        timeoutLimit={config.personalizationTimeoutLimit}
+        timeoutLimit={config.locationTimeout}
         onPersonalizationCancel={onPersonalizationCancel}
         onTimeoutExpired={onPersonalizationCancel}
       />
