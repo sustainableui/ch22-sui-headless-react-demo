@@ -7,7 +7,7 @@
 }
 
 .lowContainer {
-    background-color: green;
+    background-color: red;
 }
 
 .moderateContainer {
@@ -15,5 +15,5 @@
 }
 
 .highContainer {
-    background-color: red;
+    background-color: green;
 }
