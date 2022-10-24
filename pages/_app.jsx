@@ -67,8 +67,6 @@ function selectDisplayMode(state, newDisplayMode) {
   return {
     ...state,
     displayMode: newDisplayMode,
-    localizationStatus: SuiLocalizationStatus.Success,
-    localizationError: null,
   };
 }
 
