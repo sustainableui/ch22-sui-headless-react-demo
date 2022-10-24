@@ -2,7 +2,6 @@ import { useCallback, useEffect, useReducer } from 'react';
 import { SuiContext } from '../src/base/context/sui';
 import SuiLocalizationLoader from '../src/components/sui-localization-loader';
 import SuiSwitch from '../src/components/sui-switch';
-import '../styles/globals.css';
 
 const SuiDisplayModes = {
   Low: 'low',
