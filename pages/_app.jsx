@@ -35,7 +35,6 @@ const SuiReducerInitialState = {
   },
   localizationStatus: null,
   localizationError: null,
-  config: SuiConfig,
 };
 
 const SuiReducerActionTypes = {
@@ -66,7 +65,7 @@ function cancelLocalization(state, reason) {
 }
 
 function determineDisplayMode(state, gridCarbonIntensityData) {
-  if (gridCarbonIntensityData.value > SuiConfig.thresholds[SuiDisplayModes.Low])
+  if (gridCarbonIntensityData.value > state.config.thresholds[SuiDisplayModes.Low])
     return {
       ...state,
       displayMode: SuiDisplayModes.Low,
@@ -75,7 +74,7 @@ function determineDisplayMode(state, gridCarbonIntensityData) {
       localizationError: null,
     };
 
-  if (gridCarbonIntensityData.value > SuiConfig.thresholds[SuiDisplayModes.Moderate])
+  if (gridCarbonIntensityData.value > state.config.thresholds[SuiDisplayModes.Moderate])
     return {
       ...state,
       displayMode: SuiDisplayModes.Moderate,
@@ -133,8 +132,11 @@ function useGridCarbonIntensityData(startLocalization, cancelLocalization, deter
   }, [startLocalization, cancelLocalization, determineDisplayMode, locationTimeout]);
 }
 
-function useSui() {
-  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState);
+function useSui(config) {
+  const [state, dispatch] = useReducer(SuiReducer, SuiReducerInitialState, initialState => ({
+    ...initialState,
+    config,
+  }));
 
   const selectDisplayMode = useCallback(function (displayMode) {
     dispatch({ type: SuiReducerActionTypes.SelectDisplayMode, payload: displayMode });
@@ -171,12 +173,11 @@ function useSui() {
       onLocalizationCancel: cancelLocalization,
       onDisplayModeSelect: selectDisplayMode,
     },
-    config: state.config,
   };
 }
 
 function MyApp({ Component, pageProps }) {
-  const sui = useSui();
+  const sui = useSui(SuiConfig);
 
   if (sui.state.isLocalizationInProgress)
     return (
