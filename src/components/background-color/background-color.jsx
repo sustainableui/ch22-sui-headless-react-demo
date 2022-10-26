@@ -1,3 +1,4 @@
+import { withSui } from '../../base/context/sui';
 import s from './background-color.module.css';
 
 function LowBackgroundColor() {
@@ -12,4 +13,4 @@ function HighBackgroundColor() {
   return <main className={`${s.container} ${s.highContainer}`} />;
 }
 
-export default LowBackgroundColor;
+export default withSui([LowBackgroundColor, ModerateBackgroundColor, HighBackgroundColor]);

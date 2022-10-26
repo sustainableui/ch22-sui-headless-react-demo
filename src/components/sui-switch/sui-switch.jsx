@@ -1,4 +1,5 @@
 import { useSuiContext } from '../../base/context/sui';
+import s from './sui-switch.module.css';
 
 function SuiSwitch() {
   const {
@@ -18,7 +19,7 @@ function SuiSwitch() {
   if (!userControl) return null;
 
   return (
-    <div>
+    <div className={s.container}>
       {Object.keys(displayModes).map(displayModeKey => {
         const displayMode = displayModes[displayModeKey];
         return (
