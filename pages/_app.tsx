@@ -9,7 +9,7 @@ import '@fontsource/roboto/700.css';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <SuiProvider api={process.env.SUI_API} LoaderComponent={Loader} SwitchComponent={Switch}>
+    <SuiProvider api={process.env.NEXT_PUBLIC_SUI_API} LoaderComponent={Loader} SwitchComponent={Switch}>
       <Component {...pageProps} />
     </SuiProvider>
   );
