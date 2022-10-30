@@ -1,8 +1,15 @@
-import { useCallback, useReducer } from 'react';
+import { Dispatch, useCallback, useReducer } from 'react';
 import { SuiApi, SuiConfig, SuiCustomConfig, SuiDisplayModes, SuiGridCarbonIntensity } from '../../types';
 import { initialState as SUI_INITIAL_STATE } from '../../constants';
 import { Sui } from '../sui-context.types';
-import { getLocalStorageDisplayMode, getLocalStorageLocalizationTimestamp, isDisplayModeStale } from '../../utils';
+import {
+  getLocalStorageDisplayMode,
+  getLocalStorageLocalizationTimestamp,
+  isDisplayModeStale,
+  setLocalStorageDisplayMode,
+  setLocalStorageLocalizationTimestamp,
+} from '../../utils';
+import getDisplayModeFromGridCarbonIntensity from '../../utils/getDisplayModeFromGridCarbonIntensity';
 import useGridCarbonIntensity from './use-grid-carbon-intensity';
 import { SuiActions, SuiState } from './types';
 import { cancelLocalization, determineDisplayMode, selectDisplayMode, startLocalization } from './actions';
@@ -35,7 +42,7 @@ function suiReducerInit(initialState: SuiState, customConfig: SuiCustomConfig, d
   const localStorageDisplayMode = getLocalStorageDisplayMode(config.localStorageId);
 
   if (isValidTimestamp(localStorageLocalizationTimestamp) && isSuiDisplayMode(localStorageDisplayMode)) {
-    if (isDisplayModeStale(localStorageLocalizationTimestamp, config.localizationTimeout)) {
+    if (!isDisplayModeStale(localStorageLocalizationTimestamp, config.displayModeTimeout)) {
       displayMode = localStorageDisplayMode;
     }
   }
@@ -48,34 +55,82 @@ function suiReducerInit(initialState: SuiState, customConfig: SuiCustomConfig, d
   };
 }
 
-function useSui(api: SuiApi, customConfig: SuiCustomConfig, defaultConfig: SuiConfig): Sui {
+function useSuiReducerWithLocalStorage(
+  customConfig: SuiCustomConfig,
+  defaultConfig: SuiConfig,
+): [SuiState, Dispatch<SuiActions>] {
   const [state, dispatch] = useReducer(suiReducer, SUI_INITIAL_STATE, initialState =>
     suiReducerInit(initialState, customConfig, defaultConfig),
   );
 
-  const selectDisplayMode = useCallback(function (displayMode: SuiDisplayModes) {
-    dispatch({ type: 'select-display-mode', payload: displayMode });
-  }, []);
+  const updateLocalStorage = useCallback(
+    function (action: SuiActions) {
+      switch (action.type) {
+        case 'determine-display-mode':
+          setLocalStorageDisplayMode(
+            state.config.localStorageId,
+            getDisplayModeFromGridCarbonIntensity(action.payload, state.config),
+          );
+          setLocalStorageLocalizationTimestamp(state.config.localStorageId);
+          break;
+        case 'select-display-mode':
+          setLocalStorageDisplayMode(state.config.localStorageId, action.payload);
+          break;
+        default:
+      }
+    },
+    [state.config],
+  );
 
-  const startLocalization = useCallback(function () {
-    dispatch({
-      type: 'start-localization',
-    });
-  }, []);
+  const dispatchWithLocalStorage = useCallback(
+    function (action: SuiActions) {
+      updateLocalStorage(action);
+      dispatch(action);
+    },
+    [updateLocalStorage],
+  );
 
-  const cancelLocalization = useCallback(function (reason: string = null) {
-    dispatch({
-      type: 'cancel-localization',
-      payload: reason,
-    });
-  }, []);
+  return [state, dispatchWithLocalStorage];
+}
 
-  const determineDisplayMode = useCallback(function (gridCarbonIntensity: SuiGridCarbonIntensity) {
-    dispatch({
-      type: 'determine-display-mode',
-      payload: gridCarbonIntensity,
-    });
-  }, []);
+function useSui(api: SuiApi, customConfig: SuiCustomConfig, defaultConfig: SuiConfig): Sui {
+  const [state, dispatch] = useSuiReducerWithLocalStorage(customConfig, defaultConfig);
+
+  const selectDisplayMode = useCallback(
+    function (displayMode: SuiDisplayModes) {
+      dispatch({ type: 'select-display-mode', payload: displayMode });
+    },
+    [dispatch],
+  );
+
+  const startLocalization = useCallback(
+    function () {
+      dispatch({
+        type: 'start-localization',
+      });
+    },
+    [dispatch],
+  );
+
+  const cancelLocalization = useCallback(
+    function (reason: string = null) {
+      dispatch({
+        type: 'cancel-localization',
+        payload: reason,
+      });
+    },
+    [dispatch],
+  );
+
+  const determineDisplayMode = useCallback(
+    function (gridCarbonIntensity: SuiGridCarbonIntensity) {
+      dispatch({
+        type: 'determine-display-mode',
+        payload: gridCarbonIntensity,
+      });
+    },
+    [dispatch],
+  );
 
   useGridCarbonIntensity(
     api,

@@ -1,7 +1,7 @@
 import { SuiDisplayModes } from '../../types';
 
 function isValidTimestamp(localStorageLocalizationTimestamp) {
-  return new Date(localStorageLocalizationTimestamp).getTime() > 0;
+  return new Date(Number(localStorageLocalizationTimestamp)).getTime() > 0;
 }
 
 function isSuiDisplayMode(localStorageDisplayMode): localStorageDisplayMode is SuiDisplayModes {

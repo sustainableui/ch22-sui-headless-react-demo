@@ -5,6 +5,9 @@ import isDisplayModeStale from './isDisplayModeStale';
 import setLocalStorageValue from './setLocalStorageValue';
 import getLocalStorageDisplayMode from './getLocalStorageDisplayMode';
 import getLocalStorageLocalizationTimestamp from './getLocalStorageLocalizationTimestamp';
+import getDisplayModeFromGridCarbonIntensity from './getDisplayModeFromGridCarbonIntensity';
+import setLocalStorageLocalizationTimestamp from './setLocalStorageLocalizationTimestamp';
+import setLocalStorageDisplayMode from './setLocalStorageDisplayMode';
 
 export {
   determineSuiComponent,
@@ -14,4 +17,7 @@ export {
   setLocalStorageValue,
   getLocalStorageLocalizationTimestamp,
   getLocalStorageDisplayMode,
+  getDisplayModeFromGridCarbonIntensity,
+  setLocalStorageDisplayMode,
+  setLocalStorageLocalizationTimestamp,
 };

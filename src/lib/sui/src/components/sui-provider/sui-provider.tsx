@@ -14,7 +14,7 @@ const SUI_DEFAULT_CONFIG = {
   },
   localizationTimeout: 8000,
   userControlAllowed: true,
-  displayModeTimeout: 300000,
+  displayModeTimeout: 12000,
   localStorageId: 'sui',
 };
 
