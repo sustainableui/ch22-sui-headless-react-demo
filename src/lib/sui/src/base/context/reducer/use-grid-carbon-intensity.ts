@@ -1,31 +1,34 @@
 import { useEffect } from 'react';
+import { SuiApi, SuiGridCarbonIntensity } from '../../types';
+import { UseGridCarbonIntensityHandlers, UseGridCarbonIntensityOptions } from './use-grid-carbon-intensity.types';
 
-function useGridCarbonIntensity(options, handlers) {
-  const { localizationTimeout } = options;
+function useGridCarbonIntensity(
+  api: SuiApi,
+  options: UseGridCarbonIntensityOptions,
+  handlers: UseGridCarbonIntensityHandlers,
+) {
+  const { localizationTimeout: timeout } = options;
   const { onLocalizationStart, onLocalizationSuccess, onLocalizationFailure } = handlers;
 
   useEffect(() => {
+    onLocalizationStart();
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
-        onLocalizationStart();
-
-        const gridCarbonIntensityResponse = await fetch(
-          `/api/grid-carbon-intensity?lat=${coords.latitude}&lon=${coords.longitude}`,
-        );
+        const gridCarbonIntensityResponse = await fetch(`${api}?lat=${coords.latitude}&lon=${coords.longitude}`);
 
         if (gridCarbonIntensityResponse.ok) {
-          const data = await gridCarbonIntensityResponse.json();
+          const data: SuiGridCarbonIntensity = await gridCarbonIntensityResponse.json();
           onLocalizationSuccess(data);
         } else {
           onLocalizationFailure(gridCarbonIntensityResponse.statusText);
         }
       },
-      error => {
+      (error: GeolocationPositionError) => {
         onLocalizationFailure(error.message);
       },
-      { timeout: localizationTimeout },
+      { timeout },
     );
-  }, [localizationTimeout, onLocalizationStart, onLocalizationSuccess, onLocalizationFailure]);
+  }, [timeout, api, onLocalizationStart, onLocalizationSuccess, onLocalizationFailure]);
 }
 
 export default useGridCarbonIntensity;

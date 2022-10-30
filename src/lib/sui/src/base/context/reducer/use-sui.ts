@@ -1,5 +1,5 @@
 import { useCallback, useReducer } from 'react';
-import { SuiConfig, SuiDisplayModes, SuiGridCarbonIntensity } from '../../types';
+import { SuiApi, SuiConfig, SuiCustomConfig, SuiDisplayModes, SuiGridCarbonIntensity } from '../../types';
 import SUI_INITIAL_STATE from '../../constants/initialState';
 import { Sui } from '../sui-context.types';
 import useGridCarbonIntensity from './use-grid-carbon-intensity';
@@ -21,7 +21,7 @@ function suiReducer(state: SuiState, action: SuiActions): SuiState {
   }
 }
 
-function suiReducerInit(initialState: SuiState, customConfig: SuiConfig, defaultConfig: SuiConfig): SuiState {
+function suiReducerInit(initialState: SuiState, customConfig: SuiCustomConfig, defaultConfig: SuiConfig): SuiState {
   return {
     ...initialState,
     config: {
@@ -31,7 +31,7 @@ function suiReducerInit(initialState: SuiState, customConfig: SuiConfig, default
   };
 }
 
-function useSui(customConfig: SuiConfig, defaultConfig: SuiConfig): Sui {
+function useSui(api: SuiApi, customConfig: SuiCustomConfig, defaultConfig: SuiConfig): Sui {
   const [state, dispatch] = useReducer(suiReducer, SUI_INITIAL_STATE, initialState =>
     suiReducerInit(initialState, customConfig, defaultConfig),
   );
@@ -61,7 +61,10 @@ function useSui(customConfig: SuiConfig, defaultConfig: SuiConfig): Sui {
   }, []);
 
   useGridCarbonIntensity(
-    { localizationTimeout: state.config.localizationTimeout },
+    api,
+    {
+      localizationTimeout: state.config.localizationTimeout,
+    },
     {
       onLocalizationStart: startLocalization,
       onLocalizationSuccess: determineDisplayMode,
