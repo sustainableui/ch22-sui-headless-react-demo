@@ -1,4 +1,4 @@
-function getLocalStorageKey(localStorageId: string, localStorageValueKey) {
+function getLocalStorageKey(localStorageId: string, localStorageValueKey: string): string {
   return `${localStorageId}_${localStorageValueKey}`;
 }
 
