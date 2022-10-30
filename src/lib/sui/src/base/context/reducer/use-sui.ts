@@ -60,12 +60,19 @@ function useSui(customConfig: SuiConfig, defaultConfig: SuiConfig): Sui {
     });
   }, []);
 
-  useGridCarbonIntensity(startLocalization, cancelLocalization, determineDisplayMode, state.config.localizationTimeout);
+  useGridCarbonIntensity(
+    { localizationTimeout: state.config.localizationTimeout },
+    {
+      onLocalizationStart: startLocalization,
+      onLocalizationSuccess: determineDisplayMode,
+      onLocalizationFailure: cancelLocalization,
+    },
+  );
 
   return {
     state: {
       ...state,
-      isLocalizationInProgress: state.localization.status === 'in-progress',
+      isLoading: state.displayMode === null,
     },
     handlers: {
       onLocalizationCancel: cancelLocalization,

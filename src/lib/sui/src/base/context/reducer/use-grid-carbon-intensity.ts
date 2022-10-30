@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 
-function useGridCarbonIntensity(startLocalization, cancelLocalization, determineDisplayMode, localizationTimeout) {
+function useGridCarbonIntensity(options, handlers) {
+  const { localizationTimeout } = options;
+  const { onLocalizationStart, onLocalizationSuccess, onLocalizationFailure } = handlers;
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
-        startLocalization();
+        onLocalizationStart();
 
         const gridCarbonIntensityResponse = await fetch(
           `/api/grid-carbon-intensity?lat=${coords.latitude}&lon=${coords.longitude}`,
@@ -12,17 +15,17 @@ function useGridCarbonIntensity(startLocalization, cancelLocalization, determine
 
         if (gridCarbonIntensityResponse.ok) {
           const data = await gridCarbonIntensityResponse.json();
-          determineDisplayMode(data);
+          onLocalizationSuccess(data);
         } else {
-          cancelLocalization(gridCarbonIntensityResponse.statusText);
+          onLocalizationFailure(gridCarbonIntensityResponse.statusText);
         }
       },
       error => {
-        cancelLocalization(error.message);
+        onLocalizationFailure(error.message);
       },
       { timeout: localizationTimeout },
     );
-  }, [startLocalization, cancelLocalization, determineDisplayMode, localizationTimeout]);
+  }, [localizationTimeout, onLocalizationStart, onLocalizationSuccess, onLocalizationFailure]);
 }
 
 export default useGridCarbonIntensity;

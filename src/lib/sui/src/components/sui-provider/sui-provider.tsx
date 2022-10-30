@@ -1,5 +1,5 @@
 import React from 'react';
-import SuiLocalizationLoader from '../sui-localization-loader';
+import SuiLoader from '../sui-loader';
 import SuiSwitch from '../sui-switch';
 import { SuiConfig, SuiDisplayModes } from '../../base/types';
 import useSui from '../../base/context/reducer';
@@ -19,10 +19,10 @@ const SUI_DEFAULT_CONFIG: SuiConfig = {
 function SuiProvider({ config: customConfig, children }: SuiProviderProps) {
   const sui = useSui(customConfig, SUI_DEFAULT_CONFIG);
 
-  if (sui.state.isLocalizationInProgress) {
+  if (sui.state.isLoading) {
     return (
       <SuiContext.Provider value={sui}>
-        <SuiLocalizationLoader />
+        <SuiLoader />
       </SuiContext.Provider>
     );
   }
