@@ -47,10 +47,8 @@ function suiReducerInit(initialState: SuiState, customConfig: SuiCustomConfig, d
     }
   }
 
-  const state = { ...initialState, displayMode };
-
   return {
-    ...state,
+    ...{ ...initialState, displayMode },
     config,
   };
 }
