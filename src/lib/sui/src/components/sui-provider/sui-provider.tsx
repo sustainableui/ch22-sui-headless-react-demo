@@ -14,6 +14,8 @@ const SUI_DEFAULT_CONFIG = {
   },
   localizationTimeout: 8000,
   userControlAllowed: true,
+  displayModeTimeout: 300000,
+  localStorageId: 'sui',
 };
 
 function SuiProvider({ api, config: customConfig, children }: SuiProviderProps) {

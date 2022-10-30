@@ -4,6 +4,7 @@ import { UseGridCarbonIntensityHandlers, UseGridCarbonIntensityOptions } from '.
 
 function useGridCarbonIntensity(
   api: SuiApi,
+  skip: boolean,
   options: UseGridCarbonIntensityOptions,
   handlers: UseGridCarbonIntensityHandlers,
 ) {
@@ -11,6 +12,7 @@ function useGridCarbonIntensity(
   const { onLocalizationStart, onLocalizationSuccess, onLocalizationFailure } = handlers;
 
   useEffect(() => {
+    if (skip) return;
     onLocalizationStart();
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
@@ -28,7 +30,7 @@ function useGridCarbonIntensity(
       },
       { timeout },
     );
-  }, [timeout, api, onLocalizationStart, onLocalizationSuccess, onLocalizationFailure]);
+  }, [skip, timeout, api, onLocalizationStart, onLocalizationSuccess, onLocalizationFailure]);
 }
 
 export default useGridCarbonIntensity;

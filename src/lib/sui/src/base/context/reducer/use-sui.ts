@@ -1,10 +1,12 @@
 import { useCallback, useReducer } from 'react';
 import { SuiApi, SuiConfig, SuiCustomConfig, SuiDisplayModes, SuiGridCarbonIntensity } from '../../types';
-import SUI_INITIAL_STATE from '../../constants/initialState';
+import { initialState as SUI_INITIAL_STATE } from '../../constants';
 import { Sui } from '../sui-context.types';
+import { getLocalStorageDisplayMode, getLocalStorageLocalizationTimestamp, isDisplayModeStale } from '../../utils';
 import useGridCarbonIntensity from './use-grid-carbon-intensity';
 import { SuiActions, SuiState } from './types';
 import { cancelLocalization, determineDisplayMode, selectDisplayMode, startLocalization } from './actions';
+import { isSuiDisplayMode, isValidTimestamp } from './use-sui.types';
 
 function suiReducer(state: SuiState, action: SuiActions): SuiState {
   switch (action.type) {
@@ -22,12 +24,27 @@ function suiReducer(state: SuiState, action: SuiActions): SuiState {
 }
 
 function suiReducerInit(initialState: SuiState, customConfig: SuiCustomConfig, defaultConfig: SuiConfig): SuiState {
+  const config = {
+    ...defaultConfig,
+    ...customConfig,
+  };
+
+  let displayMode = initialState.displayMode;
+
+  const localStorageLocalizationTimestamp = getLocalStorageLocalizationTimestamp(config.localStorageId);
+  const localStorageDisplayMode = getLocalStorageDisplayMode(config.localStorageId);
+
+  if (isValidTimestamp(localStorageLocalizationTimestamp) && isSuiDisplayMode(localStorageDisplayMode)) {
+    if (isDisplayModeStale(localStorageLocalizationTimestamp, config.localizationTimeout)) {
+      displayMode = localStorageDisplayMode;
+    }
+  }
+
+  const state = { ...initialState, displayMode };
+
   return {
-    ...initialState,
-    config: {
-      ...defaultConfig,
-      ...customConfig,
-    },
+    ...state,
+    config,
   };
 }
 
@@ -62,6 +79,7 @@ function useSui(api: SuiApi, customConfig: SuiCustomConfig, defaultConfig: SuiCo
 
   useGridCarbonIntensity(
     api,
+    state.displayMode !== null,
     {
       localizationTimeout: state.config.localizationTimeout,
     },
