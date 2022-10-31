@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Typography } from '@mui/material';
-import { SuiDisplayModes, SuiGridCarbonIntensity } from '../../lib/sui/src/base/types';
+import { SuiDisplayModes, SuiGridCarbonIntensity } from '@sustainableui/sui-headless-react/src/base/types';
 
 function getColor(displayMode) {
   switch (displayMode) {

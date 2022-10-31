@@ -1,4 +1,4 @@
-import { SuiProvider } from '../src/lib/sui';
+import { SuiProvider } from '@sustainableui/sui-headless-react';
 import Loader from '../src/components/loader';
 import Switch from '../src/components/switch';
 
