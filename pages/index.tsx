@@ -27,7 +27,10 @@ export default function IndexPage() {
           Carbon Aware UI demo
         </Typography>
         <CarbonComponentWrapper>
-          <CarbonVideo id="2U3w5Blv0Lg" audioSrc="/2U3w5Blv0Lg.mp3" />
+          <CarbonVideo
+            id="2U3w5Blv0Lg"
+            audioSrc="https://drive.google.com/uc?export=download&id=1pK3ZXgWgBWLC2BCv4fLMdA3YiMoncr0C"
+          />
         </CarbonComponentWrapper>
       </Container>
       <footer className={s.footer}>
