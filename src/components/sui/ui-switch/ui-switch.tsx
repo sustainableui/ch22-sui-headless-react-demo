@@ -34,6 +34,7 @@ function UISwitch({ displayMode, recommendedDisplayMode, gridCarbonIntensity, on
 
   return (
     <Box sx={{ flexGrow: 1 }}>
+      {/* @ts-ignore */}
       <AppBar color={getColor(displayMode)} position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
