@@ -1,4 +1,4 @@
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, StyledEngineProvider } from '@mui/material';
 import { SuiProvider } from '@sustainableui/sui-headless-react';
 import CarbonLoader from '../src/components/sui/carbon-loader';
 import UiSwitch from '../src/components/sui/ui-switch';
@@ -10,12 +10,12 @@ import '@fontsource/roboto/700.css';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <>
+    <StyledEngineProvider injectFirst>
       <CssBaseline />
       <SuiProvider api={process.env.NEXT_PUBLIC_SUI_API} LoaderComponent={CarbonLoader} SwitchComponent={UiSwitch}>
         <Component {...pageProps} />
       </SuiProvider>
-    </>
+    </StyledEngineProvider>
   );
 }
 
