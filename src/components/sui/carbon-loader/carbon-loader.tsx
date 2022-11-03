@@ -1,11 +1,11 @@
 import { Alert, Button, CircularProgress, Container } from '@mui/material';
-import s from './loader.module.css';
+import s from './carbon-loader.module.css';
 
-interface LoaderProps {
+interface CarbonLoaderProps {
   onLocalizationCancel: () => void;
 }
 
-function Loader({ onLocalizationCancel }: LoaderProps) {
+function CarbonLoader({ onLocalizationCancel }: CarbonLoaderProps) {
   return (
     <Container className={s.container}>
       <CircularProgress className={s.circularProgress} color="success" size={100} />
@@ -19,4 +19,4 @@ function Loader({ onLocalizationCancel }: LoaderProps) {
   );
 }
 
-export default Loader;
+export default CarbonLoader;

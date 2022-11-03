@@ -1,0 +1,17 @@
+.audio {
+    display: block;
+    margin: 0 auto;
+}
+
+.container {
+    margin: 1rem 0;
+}
+
+.button {
+    margin-top: 0.8rem;
+}
+
+.caption {
+    display: block;
+    margin-top: 0.5rem;
+}

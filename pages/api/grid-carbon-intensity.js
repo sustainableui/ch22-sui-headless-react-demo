@@ -26,6 +26,8 @@ function getClosestAzureRegion(userCoords, azureRegions) {
   return azureRegions[closestAzureRegionIndex].RegionName;
 }
 
+// Proxy that maps user location to the closest Azure region
+// For the hackathon POC demonstration only
 async function handler(req, res) {
   const {
     query: { lat, lon },

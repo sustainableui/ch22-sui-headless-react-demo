@@ -1,0 +1,30 @@
+.container {
+    text-align: center;
+}
+
+.heading1 {
+    margin: 4rem 0 1rem;
+}
+
+.heading2 {
+    margin-bottom: 4.5rem;
+}
+
+.ccWrapper {
+    border: 1px dashed black;
+}
+
+.ccWrapperLabel {
+    font-family: "Courier New";
+    border-bottom: 1px dashed black;
+    padding: 1rem 0 2rem;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    text-align: center;
+    margin: 2rem 0;
+}
