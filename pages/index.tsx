@@ -33,12 +33,12 @@ export default function IndexPage() {
       <footer className={s.footer}>
         <p>
           <Link target="_blank" href="https://github.com/sustainableui/ch22-sui-headless-next-react-demo">
-            Demo GitHub repo
+            Demo GitHub repository
           </Link>
         </p>
         <p>
           <Link target="_blank" href="https://github.com/sustainableui/sui-headless-react">
-            SUI Headless for React library repo
+            SUI Headless for React library GitHub repository
           </Link>
         </p>
         <p>
